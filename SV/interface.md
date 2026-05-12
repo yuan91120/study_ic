@@ -173,8 +173,8 @@ endprogram
 - 改变断言的报错信息
 
   ```verilog
-  a1:assert(bus.cb.grant==2'b01);
-  else $error("Grant not asserted");
+  a1:assert(bus.cb.grant==2'b01)
+  	else $error("Grant not asserted");
   ```
 
 
