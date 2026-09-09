@@ -10,7 +10,7 @@
 
   这三个选项**编译**和**仿真**过程都要加。
 
-```
+```verilog{.line-numbers}
 -cm：指定使能覆盖率的类型，包括：line、cond、fsm、tgl、path、branch和assert
 -cm_count: 在统计是否覆盖的基础上，进一步统计覆盖的次数
 -cm_dir: 指定覆盖率统计结果的存放路径，默认是simv.vdb，更改默认的coverage model生成的目录
