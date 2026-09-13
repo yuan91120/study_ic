@@ -10,7 +10,7 @@
 
   这三个选项**编译**和**仿真**过程都要加。
 
-```verilog{.line-numbers}
+```{.line-numbers}
 -cm：指定使能覆盖率的类型，包括：line、cond、fsm、tgl、path、branch和assert
 -cm_count: 在统计是否覆盖的基础上，进一步统计覆盖的次数
 -cm_dir: 指定覆盖率统计结果的存放路径，默认是simv.vdb，更改默认的coverage model生成的目录
@@ -107,3 +107,100 @@ urg -full64 -flex_merge union -dbname <merge_coverage_name>.vdb  -dir  simv.vdb 
 urg -full64 -flex_merge drop  -dbname <merge_coverage_name>.vdb  -dir  simv.vdb &
 ```
 
+
+
+# 运行case收集覆盖率命令
+
+## 编译阶段
+
+````
+vcs -full64 \
+	-sverilog \
+    -timescale=1ns/1ps \
+    -cm line+cond+fsm+tgl+branch \
+    -cm_hier cm.cfg \
+    -cm_dir ./compile_cov.vdb \
+    -f file_list.f \
+    -o simv \
+    -l xxx_compile.log
+````
+
+- 参数解释：
+
+  -full64：指定64bit操作系统
+
+  -sverilog：支持SV语言
+
+  -cm：收集覆盖率类型
+
+  -cm_dir：指定生成的编译设计及环境信息的路径和名称
+
+  -cm_hier：指定覆盖率统计的范围，可以指定是module名、层次名和源文件等，一般通过xxx.cfg文件配置
+
+  
+
+## 仿真阶段
+
+```
+./simv -cm line+cond+fsm+tgl+branch \
+		-cm_name breath_led_cov \
+		-cm_dir ./test1_cov.vdb \
+		-l sim.log
+```
+
+- 参数信息
+
+  -cm_name xxx_test_name :用于指定覆盖率信息在simv.vdb文件夹的所在目录名称
+
+  -cm_dir：指定覆盖率统计结果的存放路径，默认是simv.vdb
+
+
+
+## 查看覆盖率
+
+- 使用DVE
+
+  ```
+  dve -full64 -cov -dir simv.vdb &
+  ```
+
+  
+
+- 使用Verdi
+
+  ```
+  verdi -cov -covdir simv.vdb &
+  ```
+
+  
+
+- urg生成html报告
+
+  ```
+  urg -full64 \
+  	-dir test1.vdb \
+  	-dir test2.vdb \
+  	-dbname merged.vdb \
+  	-report cov_report
+  或者
+  urg -full64 \
+  	-f vdv_filelist.f
+  	-dbname merged.vdb \
+  	-report cov_report
+  	
+  firefox urgReport/index.html &
+  ```
+
+  参数：
+
+  -report ：指定生成的报告名称，默认生成的报告保存在urgReport文件夹中
+
+  -dir：需要合并的vdb文件名
+
+  -dbname：合并之后的vdb文件名
+
+  -flex_merge union：新旧覆盖率合并
+
+  -flex_merge drop：丢弃旧覆盖率，仅保留新数据
+
+  
